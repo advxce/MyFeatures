@@ -53,6 +53,7 @@ class DownloadRepoRetrofit(
                     emit(DownloadStatus.IDLE to 0)
                 }
             } catch (e: Exception) {
+                println("exception ${e.stackTrace}")
                 emit(DownloadStatus.IDLE to 0)
             }
 

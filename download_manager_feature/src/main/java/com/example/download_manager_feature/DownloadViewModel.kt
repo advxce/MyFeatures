@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 class DownloadViewModel(
-    private val downloadRepo: DownloadRepo
+    private val downloadRepo: DownloadRepoRetrofit
 ) : ViewModel() {
 
 
@@ -35,22 +35,22 @@ class DownloadViewModel(
 
     init {
         _downloadingFile.value = testDownloadList
-        viewModelScope.launch {
-            downloadRepo.downloadCompleteEvent.collect { systemId ->
-                val itemId = systemIdToItemIsMap[systemId] ?: return@collect
-                val updatedList = _downloadingFile.value.map { item->
-                    if(item.id == itemId){
-                        item.copy(status = DownloadStatus.COMPLETED, progress = 100)
-                    } else{
-                        item
-                    }
-                }
-                _downloadingFile.value = updatedList
-                testDownloadList.clear()
-                testDownloadList.addAll(updatedList)
-                systemIdToItemIsMap.remove(systemId)
-            }
-        }
+//        viewModelScope.launch {
+//            downloadRepo.downloadCompleteEvent.collect { systemId ->
+//                val itemId = systemIdToItemIsMap[systemId] ?: return@collect
+//                val updatedList = _downloadingFile.value.map { item->
+//                    if(item.id == itemId){
+//                        item.copy(status = DownloadStatus.COMPLETED, progress = 100)
+//                    } else{
+//                        item
+//                    }
+//                }
+//                _downloadingFile.value = updatedList
+//                testDownloadList.clear()
+//                testDownloadList.addAll(updatedList)
+//                systemIdToItemIsMap.remove(systemId)
+//            }
+//        }
 
     }
 
@@ -58,46 +58,60 @@ class DownloadViewModel(
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadFile(downloadItem: DownloadItem, context: Context) {
         val job = viewModelScope.launch(Dispatchers.IO) {
-            val systemID = downloadRepo.startDownload(downloadItem.url, downloadItem.fileName)
-            systemIdToItemIsMap[systemID] = downloadItem.id
-            var isDownloading = true
-            while (isDownloading){
+//            val systemID = downloadRepo.startDownload(downloadItem.url, downloadItem.fileName)
+//            systemIdToItemIsMap[systemID] = downloadItem.id
+//            var isDownloading = true
+//            while (isDownloading){
+//
+//                val currentItem = _downloadingFile.value.find { it.id == downloadItem.id }
+//                if (currentItem?.status == DownloadStatus.COMPLETED) {
+//                    isDownloading = false
+//                    break
+//                }
+//
+//                val progress = downloadRepo.getDownloadProgress(context, systemID)
+//                withContext(Dispatchers.Main){
+//                    val updatedList = _downloadingFile.value.map { item ->
+//                        if (item.id == downloadItem.id) {
+//                            if (progress >= 100) {
+//                                isDownloading = false
+//                                systemIdToItemIsMap.remove(systemID)
+//                                return@withContext item.copy(
+//                                    progress = 100,
+//                                    status = DownloadStatus.COMPLETED
+//                                )
+//                            }
+//                            println("item if: $item")
+//                            println("progress: $progress")
+//                            item.copy(progress = progress, status = DownloadStatus.DOWNLOADING)
+//                        } else {
+//                            println("item else: $item")
+//                            item
+//                        }
+//                    }
+//                    _downloadingFile.value = updatedList
+//
+//                }
+//
+//                if (isDownloading){
+//                    delay(500)
+//                }
+//
+//            }
 
-                val currentItem = _downloadingFile.value.find { it.id == downloadItem.id }
-                if (currentItem?.status == DownloadStatus.COMPLETED) {
-                    isDownloading = false
-                    break
-                }
-
-                val progress = downloadRepo.getDownloadProgress(context, systemID)
-                withContext(Dispatchers.Main){
-                    val updatedList = _downloadingFile.value.map { item ->
-                        if (item.id == downloadItem.id) {
-                            if (progress >= 100) {
-                                isDownloading = false
-                                systemIdToItemIsMap.remove(systemID)
-                                return@withContext item.copy(
-                                    progress = 100,
-                                    status = DownloadStatus.COMPLETED
-                                )
-                            }
-                            println("item if: $item")
-                            println("progress: $progress")
-                            item.copy(progress = progress, status = DownloadStatus.DOWNLOADING)
-                        } else {
-                            println("item else: $item")
-                            item
-                        }
+            downloadRepo.downloadFile(downloadItem.url, downloadItem.fileName)
+                .collect { (status, progress) ->
+                    val updatedList = _downloadingFile.value.map {
+                        if(it.id == downloadItem.id){
+                            it.copy(status = status, progress = progress)
+                        } else
+                            it
                     }
                     _downloadingFile.value = updatedList
-
+                    testDownloadList.clear()
+                    testDownloadList.addAll(updatedList)
                 }
 
-                if (isDownloading){
-                    delay(500)
-                }
-
-            }
         }
         downloadTasks[job] = downloadItem.copy(status = DownloadStatus.DOWNLOADING)
     }
@@ -111,7 +125,7 @@ class DownloadViewModel(
             job.cancel()
         }
 
-        downloadRepo.clear()
+//        downloadRepo.clear()
         viewModelScope.cancel()
         super.onCleared()
     }

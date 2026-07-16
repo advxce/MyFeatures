@@ -32,7 +32,7 @@ class DownloadManagerFragment: Fragment() {
 
 
     val vmFactory: DownloadViewModelFactory by lazy {
-        DownloadViewModelFactory(requireContext().applicationContext, ServiceLocator.provideRepository(requireContext().applicationContext))
+        DownloadViewModelFactory(requireContext().applicationContext, ServiceLocator.fileDownloadApi)
 
     }
     private val downloadViewModel: DownloadViewModel by lazy {

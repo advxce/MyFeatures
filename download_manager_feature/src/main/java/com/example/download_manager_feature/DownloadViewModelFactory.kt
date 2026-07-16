@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 
 class DownloadViewModelFactory(
     private val context: Context,
-    private val downloadRepo: DownloadRepo
+    private val fileDownloadApi: FileDownloadApi
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(DownloadViewModel::class.java)){
-            return DownloadViewModel(DownloadRepo(context)) as T
+            return DownloadViewModel(DownloadRepoRetrofit(ServiceLocator.fileDownloadApi)) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
