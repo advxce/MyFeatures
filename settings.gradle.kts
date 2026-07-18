@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "MyFeatures"
 include(":app")
 include(":download_manager_feature")
+include(":core:navigation")
