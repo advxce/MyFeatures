@@ -25,3 +25,6 @@ dependencyResolutionManagement {
 rootProject.name = "MyFeatures"
 include(":app")
 include(":download_manager_feature")
+include(":google_map_feature")
+include(":core")
+include(":core:navigation")
