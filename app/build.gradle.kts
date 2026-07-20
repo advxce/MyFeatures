@@ -54,4 +54,5 @@ dependencies {
     
     implementation(project(":google_map_feature"))
     implementation(project(":download_manager_feature"))
+    implementation(project(":core:navigation"))
 }

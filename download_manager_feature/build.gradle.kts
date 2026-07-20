@@ -46,4 +46,7 @@ dependencies {
     api(libs.kotlinx.serialization.json)
     api(platform(libs.network.okhttp.bom) )
     api(libs.retrofit2.kotlinx.serialization.converter)
+
+    implementation(project(":core:navigation"))
+
 }
