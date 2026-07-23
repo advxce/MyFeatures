@@ -3,37 +3,29 @@ package com.example.google_map_feature.ui.screens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.google_map_feature.ui.viewModels.MapViewModel
+import com.example.navigation.domain.NavigateToDownloadScreen
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.*
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapSyncScreen(viewModel: MapViewModel = viewModel()) {
+fun MapSyncScreen(
+    viewModel: MapViewModel = viewModel()
+) {
     val events = viewModel.events
     val selectedId by viewModel.selectedId.collectAsState()
     val listState = rememberLazyListState()
@@ -41,7 +33,6 @@ fun MapSyncScreen(viewModel: MapViewModel = viewModel()) {
         position = CameraPosition.fromLatLngZoom(LatLng(54.68, 25.27), 12f)
     }
 
-    // Синхронизация: прокрутка списка при выборе маркера
     LaunchedEffect(selectedId) {
         selectedId?.let { id ->
             val index = events.indexOfFirst { it.id == id }
@@ -49,16 +40,16 @@ fun MapSyncScreen(viewModel: MapViewModel = viewModel()) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()){
-
-
-        // Шторка с обычным LazyColumn
-        BottomSheetScaffold(
-            sheetPeekHeight = 200.dp,
-            sheetContent = {
+    // Scaffold ДОЛЖЕН быть корневым элементом
+    BottomSheetScaffold(
+        modifier = Modifier.fillMaxSize(),
+        sheetPeekHeight = 200.dp,
+        sheetContent = {
+            // Контент шторки
+            Box(Modifier.fillMaxWidth().height(300.dp)) {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.height(300.dp).padding(16.dp)
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     items(events) { event ->
                         val isSelected = event.id == selectedId
@@ -73,6 +64,12 @@ fun MapSyncScreen(viewModel: MapViewModel = viewModel()) {
                     }
                 }
             }
+        }
+    ) { paddingValues ->
+        // Основной контент экрана (Карта + Кнопка поверх)
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues) // Учитываем отступы Scaffold
         ) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
@@ -88,6 +85,19 @@ fun MapSyncScreen(viewModel: MapViewModel = viewModel()) {
                         }
                     )
                 }
+            }
+
+            // Кнопка навигации поверх карты
+            Button(
+                onClick = {
+                    // Вызываем навигацию через роутер
+                    viewModel.navigateTo(NavigateToDownloadScreen)
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter) // Или BottomCenter, но там шторка
+                    .padding(top = 16.dp)
+            ) {
+                Text("Go to Download Screen")
             }
         }
     }

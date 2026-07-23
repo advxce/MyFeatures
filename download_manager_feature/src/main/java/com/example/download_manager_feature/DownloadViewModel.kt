@@ -7,6 +7,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModel
 import com.example.download_manager_feature.ServiceLocator.testDownloadList
+import com.example.navigation.domain.NavAction
+import com.example.navigation.domain.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,7 +22,8 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 class DownloadViewModel(
-    private val downloadRepo: DownloadRepo
+    private val downloadRepo: DownloadRepo,
+    private val router: Router
 ) : ViewModel() {
 
 
@@ -54,6 +57,10 @@ class DownloadViewModel(
 
     }
 
+
+    fun navigateTo(navAction: NavAction){
+        router.navigateTo(navAction)
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadFile(downloadItem: DownloadItem, context: Context) {
