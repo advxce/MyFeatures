@@ -5,3 +5,5 @@ interface NavAction
 object NavigateToDownloadScreen: NavAction
 
 object NavigateToGoogleMapScreen: NavAction
+
+object NavigateToExoPlayerScreen: NavAction

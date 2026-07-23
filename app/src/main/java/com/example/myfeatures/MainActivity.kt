@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.download_manager_feature.DownloadManagerFragment
 import com.example.download_manager_feature.DownloadNavProvider
+import com.example.exo_player_feature.di.ExoPlayerNavProvider
 import com.example.google_map_feature.di.MapNavProvider
 import com.example.google_map_feature.ui.screens.MapFragment
 import com.example.google_map_feature.ui.screens.MapSyncScreen
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity(), Router {
 
     private val navProviders = listOf(
         MapNavProvider(),
-        DownloadNavProvider()
+        DownloadNavProvider(),
+        ExoPlayerNavProvider()
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
