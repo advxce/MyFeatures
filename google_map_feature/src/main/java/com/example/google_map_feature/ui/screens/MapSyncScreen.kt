@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.google_map_feature.ui.viewModels.MapViewModel
 import com.example.navigation.domain.NavigateToDownloadScreen
+import com.example.navigation.domain.NavigateToExoPlayerScreen
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -98,6 +99,13 @@ fun MapSyncScreen(
                     .padding(top = 16.dp)
             ) {
                 Text("Go to Download Screen")
+            }
+            Button(
+                onClick = {viewModel.navigateTo(NavigateToExoPlayerScreen)},
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                Text("Go to ExoPlayer")
             }
         }
     }

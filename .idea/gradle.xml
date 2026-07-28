@@ -12,7 +12,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/navigation" />
+            <option value="$PROJECT_DIR$/core/remoteConfig" />
             <option value="$PROJECT_DIR$/download_manager_feature" />
+            <option value="$PROJECT_DIR$/exo_player_feature" />
             <option value="$PROJECT_DIR$/google_map_feature" />
           </set>
         </option>
