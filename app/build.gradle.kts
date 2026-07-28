@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -56,4 +57,7 @@ dependencies {
     implementation(project(":download_manager_feature"))
     implementation(project(":exo_player_feature"))
     implementation(project(":core:navigation"))
+
+    implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
+
 }
