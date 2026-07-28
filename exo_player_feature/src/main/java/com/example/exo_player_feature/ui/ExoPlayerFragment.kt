@@ -74,10 +74,11 @@ class ExoPlayerFragment: Fragment() {
         player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
             binding.playerView.player = exoPlayer
 
-            val mediaItem = MediaItem.fromUri("")
+            val mediaItem = MediaItem.fromUri("https://samplelib.com/mp4/sample-5s.mp4")
             exoPlayer.setMediaItem(mediaItem)
 
             exoPlayer.prepare()
+            exoPlayer.playWhenReady =  true
         }
     }
 
