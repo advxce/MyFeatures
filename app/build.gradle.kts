@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -57,7 +58,11 @@ dependencies {
     implementation(project(":download_manager_feature"))
     implementation(project(":exo_player_feature"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:remoteConfig"))
 
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-config-ktx:22.0.0")
+
 
 }

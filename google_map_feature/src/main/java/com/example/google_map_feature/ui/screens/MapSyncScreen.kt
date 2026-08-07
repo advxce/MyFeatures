@@ -1,6 +1,7 @@
 package com.example.google_map_feature.ui.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,11 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.google_map_feature.ui.viewModels.MapViewModel
 import com.example.navigation.domain.NavigateToDownloadScreen
 import com.example.navigation.domain.NavigateToExoPlayerScreen
+import com.example.remoteConfig.AppConfig
+import com.example.remoteConfig.FirebaseAppConfig
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -27,12 +32,15 @@ import com.google.maps.android.compose.*
 fun MapSyncScreen(
     viewModel: MapViewModel = viewModel()
 ) {
+    val isExoPlayerFeatureEnabled by viewModel.isExoPlayerFeatureEnabled.collectAsStateWithLifecycle()
     val events = viewModel.events
     val selectedId by viewModel.selectedId.collectAsState()
     val listState = rememberLazyListState()
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(54.68, 25.27), 12f)
     }
+
+    val context = LocalContext.current
 
     LaunchedEffect(selectedId) {
         selectedId?.let { id ->
@@ -47,10 +55,14 @@ fun MapSyncScreen(
         sheetPeekHeight = 200.dp,
         sheetContent = {
             // Контент шторки
-            Box(Modifier.fillMaxWidth().height(300.dp)) {
+            Box(Modifier
+                .fillMaxWidth()
+                .height(300.dp)) {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
                     items(events) { event ->
                         val isSelected = event.id == selectedId
@@ -68,9 +80,10 @@ fun MapSyncScreen(
         }
     ) { paddingValues ->
         // Основной контент экрана (Карта + Кнопка поверх)
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues) // Учитываем отступы Scaffold
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues) // Учитываем отступы Scaffold
         ) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
@@ -101,12 +114,25 @@ fun MapSyncScreen(
                 Text("Go to Download Screen")
             }
             Button(
-                onClick = {viewModel.navigateTo(NavigateToExoPlayerScreen)},
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
+                onClick = {
+                    throw RuntimeException("Custom exception for checking crashlytics")
+                }
             ) {
-                Text("Go to ExoPlayer")
+                Text("Crashlytics check")
             }
+            println("isExoPlayerFeatureEnabled: $isExoPlayerFeatureEnabled")
+            if (isExoPlayerFeatureEnabled) {
+                Button(
+                    onClick = { viewModel.navigateTo(NavigateToExoPlayerScreen) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                ) {
+                    Text("Go to ExoPlayer")
+                }
+            } else {
+                Toast.makeText(context, "Feature is disabled", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 }
